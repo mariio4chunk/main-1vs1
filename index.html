@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connect Four vs. BOT (AI)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="setup-modal" class="modal show">
+        <div class="modal-content">
+            <h2 class="modal-title">Pilih Mode Permainan</h2>
+            <div class="modal-buttons">
+                <button id="vs-player" class="modal-button">Lawan Teman</button>
+                <button id="vs-bot" class="modal-button">Lawan Bot</button>
+            </div>
+            <div id="difficulty-selection">
+                <h3 class="modal-title" style="font-size: 1.5rem; margin-top: 20px;">Pilih Level Bot</h3>
+                <div class="modal-buttons">
+                    <button data-difficulty="easy" class="difficulty-button easy">Mudah</button>
+                    <button data-difficulty="medium" class="difficulty-button medium">Sedang</button>
+                    <button data-difficulty="hard" class="difficulty-button hard">Sulit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="game-over-modal" class="modal">
+        <div class="modal-content">
+            <h2 id="modal-message" class="modal-title">Pemain 1 Menang!</h2>
+            <button id="play-again-button" class="modal-button">Main Lagi</button>
+        </div>
+    </div>
+
+    <div id="game-container" class="game-container">
+        <h1 class="game-title">Connect Four</h1>
+        <div class="header">
+            <div id="status">
+                <span class="player-indicator"></span>
+                <span id="status-text">Giliran Kamu</span>
+            </div>
+            <button id="reset-button">Ulangi</button>
+        </div>
+        <div id="game-board"></div>
+    </div>
+
+    <div class="watermark">© mariio4chunk</div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

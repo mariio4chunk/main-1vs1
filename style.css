@@ -1,0 +1,161 @@
+:root {
+    --board-bg: #0a3d62;
+    --cell-bg: #dcdde1;
+    --player1-color: #e84393;
+    --player2-color: #00d2d3; /* Warna Bot */
+    --shadow-color: rgba(0, 0, 0, 0.2);
+    --font-family: 'Poppins', sans-serif;
+    --background-start: #3c6382;
+    --background-end: #0a3d62;
+}
+
+/* Basic Reset & Sizing */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
+
+body {
+    font-family: var(--font-family);
+    background: linear-gradient(135deg, var(--background-start), var(--background-end));
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    min-height: 100dvh;
+}
+
+/* Modals */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s;
+    z-index: 1000;
+}
+.modal.show { opacity: 1; visibility: visible; }
+.modal-content {
+    background: linear-gradient(135deg, var(--background-start), var(--background-end));
+    padding: 30px 40px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    border: 2px solid rgba(255,255,255,0.2);
+    transform: scale(0.7);
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.modal.show .modal-content { transform: scale(1); }
+.modal-title { font-size: 2rem; font-weight: 700; margin-bottom: 25px; }
+.modal-buttons { display: flex; flex-direction: column; gap: 15px; }
+.modal-button, .difficulty-button {
+    background-image: linear-gradient(45deg, #6a11cb, #2575fc);
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 10px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    width: 100%;
+}
+.modal-button:hover, .difficulty-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+}
+#difficulty-selection { display: none; margin-top: 20px; }
+.difficulty-button.easy { background-image: linear-gradient(45deg, #2ed573, #1e90ff); }
+.difficulty-button.medium { background-image: linear-gradient(45deg, #ffb142, #ff793f); }
+.difficulty-button.hard { background-image: linear-gradient(45deg, #ff4757, #be2edd); }
+
+/* Game Area */
+.game-container {
+    display: none; /* Initially hidden */
+    flex-direction: column;
+    align-items: center;
+    gap: 25px;
+    padding: 20px;
+    width: 100%;
+    max-width: 500px;
+}
+.game-container.active { display: flex; }
+
+.game-title {
+    font-size: 2.5rem; font-weight: 800; text-transform: uppercase;
+    background: linear-gradient(45deg, var(--player1-color), var(--player2-color), white);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: text-shine 5s linear infinite;
+}
+
+.header {
+    width: 100%; display: flex; justify-content: space-between; align-items: center;
+    background-color: rgba(255, 255, 255, 0.1); padding: 10px 20px; border-radius: 12px;
+    box-shadow: 0 4px 15px var(--shadow-color); border: 1px solid rgba(255,255,255,0.2);
+}
+#status { font-size: 1.2rem; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+#status .player-indicator {
+    width: 24px; height: 24px; border-radius: 50%; display: inline-block;
+    transition: all 0.4s ease; box-shadow: 0 0 10px white;
+}
+#reset-button {
+    background-image: linear-gradient(45deg, #ff7e5f, #feb47b); color: white; border: none;
+    padding: 12px 24px; border-radius: 8px; font-size: 1rem; font-weight: 600;
+    cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+#game-board {
+    display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px;
+    background-color: var(--board-bg); padding: 12px; border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), inset 0 0 15px rgba(0,0,0,0.5);
+    width: 100%; aspect-ratio: 7 / 6; border: 2px solid rgba(255,255,255,0.3);
+}
+.column { display: grid; grid-template-rows: repeat(6, 1fr); gap: 8px; cursor: pointer; border-radius: 10px; transition: background-color 0.2s; }
+.column:hover { background-color: rgba(255, 255, 255, 0.15); }
+.cell { background-color: var(--cell-bg); border-radius: 50%; aspect-ratio: 1 / 1; box-shadow: inset 0 3px 6px rgba(0,0,0,0.3); position: relative; }
+.cell::after {
+    content: ''; position: absolute; top: 5%; left: 10%; width: 80%; height: 40%;
+    border-radius: 50%; background: radial-gradient(circle, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 80%);
+    transform: rotate(15deg); opacity: 0; transition: opacity 0.5s;
+}
+.cell.player1, .cell.player2 { animation: drop-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+.cell.player1 { background-color: var(--player1-color); }
+.cell.player2 { background-color: var(--player2-color); }
+.cell.player1::after, .cell.player2::after { opacity: 1; }
+.cell.win { animation: win-pulse 0.8s infinite; }
+
+/* Watermark */
+.watermark {
+    position: fixed;
+    bottom: 10px;
+    right: 15px;
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.3);
+    pointer-events: none; /* Supaya tidak bisa di-klik */
+    z-index: 2000;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+
+/* Animations */
+@keyframes drop-in { from { opacity: 0; transform: translateY(-300%) scale(0.8); } to { opacity: 1; transform: translateY(0) scale(0.9); } }
+@keyframes win-pulse { 0% { transform: scale(0.9); } 50% { transform: scale(1.1); box-shadow: 0 0 25px white; } 100% { transform: scale(0.9); } }
+@keyframes text-shine { to { background-position: 200% center; } }
+
+/* Responsive */
+@media (max-width: 500px) {
+    .game-title { font-size: 2rem; }
+    .header { flex-direction: column; gap: 12px; padding: 15px; }
+    #status { font-size: 1.1rem; }
+    .modal-content { width: 90%; padding: 30px 20px; }
+    .modal-title { font-size: 1.5rem; }
+    .modal-button, .difficulty-button { font-size: 1rem; padding: 12px 20px; }
+}
